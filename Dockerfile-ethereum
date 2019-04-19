@@ -1,3 +1,4 @@
+FROM centos:7
 RUN wget https://github.com/ethereum/go-ethereum/archive/v1.8.27.tar.gz && tar -zxvf v1.8.27.tar.gc && cd /root/go-ethereum-1.8.27 && make install
 COPY ./conf/genesis.json /root/go-ethereum-1.8.27/build/bin
 RUN cd /root/go-ethereum-1.8.27/build/bin && ./geth --datadir chain  --rpc   --rpccorsdomain "*" init genesis.json
