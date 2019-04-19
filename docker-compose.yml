@@ -1,0 +1,17 @@
+version: '0.1'
+
+services:
+  redis:
+    image: distributedatabase_redis:v0.1
+    ports:
+      - "6379:6379"
+    restart: on-failure
+    container_name: distributedatabase-redis
+    tty: true
+  ethereum:
+    image: distributedatabase_ethereum:v0.1
+    ports:
+      - "8545:8545"
+    restart: on-failure
+    container_name: distributedatabase-ethereum
+    tty: true

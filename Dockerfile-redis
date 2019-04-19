@@ -1,5 +1,5 @@
-FROM centos:7
-RUN sudo yum install epel-release && sudo yum update && sudo yum -y install redis
+FROM centos:7.2.1511
+RUN  yum -y install epel-release && yum -y update && yum -y install redis
 COPY ./conf/redis.conf /etc/redis.conf
 CMD ["sudo systemctl restart redis"]
 

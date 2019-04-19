@@ -1,5 +1,10 @@
-FROM centos:7
-RUN wget https://github.com/ethereum/go-ethereum/archive/v1.8.27.tar.gz && tar -zxvf v1.8.27.tar.gc && cd /root/go-ethereum-1.8.27 && make install
-COPY ./conf/genesis.json /root/go-ethereum-1.8.27/build/bin
-RUN cd /root/go-ethereum-1.8.27/build/bin && ./geth --datadir chain  --rpc   --rpccorsdomain "*" init genesis.json
+FROM centos:7.2.1511
+RUN yum -y install wget && wget https://github.com/ethereum/go-ethereum/archive/v1.8.27.tar.gz && tar -zxvf v1.8.27.tar.gz
+RUN yum -y install epel && yum -y install go
+RUN rpm --rebuilddb && yum -y install gcc automake autoconf libtool make && yum -y install gcc gcc-c++
+WORKDIR go-ethereum-1.8.27
+RUN  make all
+COPY ./conf/genesis.json build/bin
+WORKDIR build/bin
+RUN ./geth --datadir chain  --rpc   --rpccorsdomain "*" init genesis.json
 CMD [./geth --datadir chain  --rpc --rpcapi "db,web3,eth,net,personal" --rpcaddr "0.0.0.0" --rpccorsdomain "*" --nodiscover --port 16333 --rpcport 8545  console]
