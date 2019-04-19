@@ -1,0 +1,7 @@
+RUN sudo yum install epel-release && sudo yum update && sudo yum -y install redis
+COPY ./conf/redis.conf /etc/redis.conf
+CMD ["sudo systemctl restart redis"]
+
+
+
+
