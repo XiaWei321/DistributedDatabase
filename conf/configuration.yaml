@@ -1,0 +1,10 @@
+database:
+  redis:
+    address: localhost
+    port: 6379
+ipfs:
+  address: localhost
+  port: 5001
+ethereum:
+  address: localhost
+  port: 8545
