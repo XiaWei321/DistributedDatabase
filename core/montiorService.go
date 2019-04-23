@@ -10,7 +10,7 @@ type MonitorService interface {
 
 	InitRedisConnection()
 
-	InitIpfsConnection()
+	InitEthereumConnection()
 
 	InitConfiguration(filename string)(*yaml.File)
 

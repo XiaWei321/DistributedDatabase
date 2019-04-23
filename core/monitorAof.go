@@ -2,8 +2,10 @@ package core
 
 import (
 	"fmt"
+	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/garyburd/redigo/redis"
 	"github.com/kylelemons/go-gypsy/yaml"
+
 )
 
 type MonitorServiceImp struct{
@@ -17,7 +19,8 @@ type RecieveAofReciept struct{
 
 
 var aofChannel chan RecieveAofReciept
-var connection redis.Conn
+var redisConnection redis.Conn
+var ethereumConnection *rpc.Client
 var config *yaml.File
 
 
@@ -40,17 +43,23 @@ func (msi MonitorServiceImp) InitRedisConnection(){
 	conn, err := redis.Dial("tcp", databaseAddress)
 	if err != nil {
 		fmt.Println(err)
+		return
 	}
-	connection = conn
+	redisConnection = conn
 }
 
-func (msi MonitorServiceImp) InitIpfsConnection(){
+func (msi MonitorServiceImp) InitEthereumConnection(){
 
-	ipfsAddress, _ := config.Get("ipfs.address")
-
-	
-
+	ethereumAddress, _ := config.Get("ethereum.address")
+	conn , err := rpc.Dial(ethereumAddress)
+	if err!= nil {
+		fmt.Println(err)
+		return
+	}
+	ethereumConnection = conn
 }
+
+
 
 
 
