@@ -2,16 +2,27 @@ version: '0.1'
 
 services:
   redis:
-    image: distributedatabase_redis:v0.1
+    image: huyifan/distributeddatabase-redis:v0.2
     ports:
       - "6379:6379"
     restart: on-failure
-    container_name: distributedatabase-redis
+    container_name: distributeddatabase-redis
+    privileged: true
     tty: true
   ethereum:
-    image: distributedatabase_ethereum:v0.1
+    image: huyifan/distributeddatabase-ethereum:v0.2
     ports:
       - "8545:8545"
     restart: on-failure
-    container_name: distributedatabase-ethereum
+    container_name: distributeddatabase-ethereum
+    tty: true
+  ipfs:
+    image: ipfs/go-ipfs
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+      - "5001:5001"
+      - "4001:4001"
+    restart: on-failure
+    container_name: distributeddatabase-ipfs
     tty: true

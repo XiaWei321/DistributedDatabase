@@ -1,2 +1,2 @@
 #!/bin/bash
-systemctl restart redis
+systemctl start redis
