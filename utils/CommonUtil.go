@@ -2,8 +2,6 @@ package utils
 
 import (
 	"bytes"
-	"fmt"
-	"github.com/kylelemons/go-gypsy/yaml"
 	"log"
 	"os/exec"
 	"strings"
@@ -38,12 +36,11 @@ func UploadFile(filename string) (string, error) {
 
 
 
-func DownloadFile(hash string, filename string) {
+func DownloadFile(hash string, filename string) (error){
 	myhash := strings.Split(hash, "\000")
 	finalhash := myhash[0]
 	cmd := exec.Command("ipfs", "get", finalhash, "-o="+filename)
 	err := cmd.Run()
-	if err != nil {
-		fmt.Print(err)
-	}
+
+	return err
 }
