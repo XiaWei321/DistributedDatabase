@@ -9,13 +9,13 @@ import (
 func main(){
 
 
-	msi := core.MonitorServiceImp{}
-
-	msi.InitChannel()
-	msi.InitIpfsConnection()
-	msi.InitRedisConnection()
-	msi.InitConfiguration("../conf/configuration.yaml")
-	msi.Watch()
+	lsi := core.LogicServiceImp{}
+	isi := core.InitServiceImp{}
+	isi.InitChannel()
+	isi.InitRedisConnection()
+	isi.InitEthereumConnection()
+	isi.InitConfiguration("../conf/configuration.yaml")
+	lsi.Watch()
 
 
 
