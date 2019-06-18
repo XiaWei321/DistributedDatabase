@@ -27,7 +27,7 @@ type RecieveAofReciept struct{
 var aofChannel chan RecieveAofReciept
 var redisConnection redis.Conn
 var ethereumConnection *rpc.Client
-
+var messageChannel chan string
 
 
 
@@ -58,6 +58,7 @@ func (isi InitServiceImp) InitChannel(){
 
 	aofChannel = make(chan RecieveAofReciept)
 	utils.UploadChannel = make(chan bool)
+	messageChannel = make(chan string)
 }
 
 
@@ -99,4 +100,15 @@ func (lsi LogicServiceImp) AcquireFileFromIpfs(ipfsHash string) bool{
 	return true
 }
 
+
+func (lsi LogicServiceImp) WatchEthereumMessage(){
+
+
+	for {
+
+		<- messageChannel
+
+	}
+
+}
 

@@ -10,5 +10,5 @@ type LogicService interface {
 
 	AcquireFileFromIpfs(ipfsHash string)
 	
-
+	WatchEthereumMessage()
 }
