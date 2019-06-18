@@ -8,6 +8,4 @@ type InitService interface {
 
 	InitEthereumConnection()
 
-	InitConfiguration(filename string)
-
 }

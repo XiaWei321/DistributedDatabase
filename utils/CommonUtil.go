@@ -74,11 +74,27 @@ func RedisCmdFileWatcher(){
 
 	}()
 
+	err = watcher.Add(Conf.DB.Rs.HistroyPath)
+
+	if err != nil{
+		Log.Error("将文件加入监听列表失败: ", err)
+	}
 
 
 }
 
 
+func UploadAofFileToIpfs()(string){
+
+	filePath := Conf.DB.Rs.HistroyPath
+
+	ipfsHash, err := UploadFile(filePath)
+	if err != nil {
+		Log.Error("上传文件到ipfs失败: ", err)
+		return ""
+	}
+	return ipfsHash
+}
 
 
 
