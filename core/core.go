@@ -1,7 +1,7 @@
 package core
 
 import (
-	"../utils"
+	"DistributedDatabase/utils"
 	"fmt"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/garyburd/redigo/redis"

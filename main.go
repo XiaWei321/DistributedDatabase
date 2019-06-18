@@ -1,8 +1,8 @@
 package main
 
 import (
-	"./core"
-	"./utils"
+	"DistributedDatabase/core"
+	"DistributedDatabase/utils"
 )
 
 func main(){
