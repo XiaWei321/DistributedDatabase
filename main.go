@@ -15,7 +15,7 @@ func main(){
 	//isi.InitRedisConnection()
 	//isi.InitEthereumConnection()
 	lsi.WatchRedisChannalChange()
-
+	lsi.WatchEthereumMessage()
 
 
 }
