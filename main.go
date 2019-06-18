@@ -1,21 +1,20 @@
 package main
 
-
 import (
-
 	"./core"
+	"./utils"
 )
 
 func main(){
 
-
+	utils.GetYaml()
+	utils.RedisCmdFileWatcher()
 	lsi := core.LogicServiceImp{}
 	isi := core.InitServiceImp{}
 	isi.InitChannel()
 	isi.InitRedisConnection()
 	isi.InitEthereumConnection()
-	isi.InitConfiguration("../conf/configuration.yaml")
-	lsi.Watch()
+	lsi.WatchRedisChannalChange()
 
 
 

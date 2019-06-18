@@ -3,14 +3,12 @@ package service
 
 type LogicService interface {
 
-	UploadAofFileToIpfs(filePath string)
 
 	SendIpfsHashToEthereum(ipfsHash string)
 
-	Watch()
+	WatchRedisChannalChange()
 
 	AcquireFileFromIpfs(ipfsHash string)
-
-	RecoverRedisData(filePath string)
+	
 
 }

@@ -30,20 +30,6 @@ var ethereumConnection *rpc.Client
 var config *yaml.File
 
 
-func (isi InitServiceImp) InitConfiguration(filename string)(*yaml.File){
-
-	conf,err := yaml.ReadFile(filename)
-
-	if err != nil{
-		fmt.Println(err)
-		return nil
-	}
-	config = conf
-
-	return config
-}
-
-
 
 func (isi InitServiceImp) InitRedisConnection(){
 
@@ -71,22 +57,11 @@ func (isi InitServiceImp) InitEthereumConnection(){
 func (isi InitServiceImp) InitChannel(){
 
 	aofChannel = make(chan RecieveAofReciept)
-
+	utils.UploadChannel = make(chan bool)
 }
 
 
 
-func (lsi LogicServiceImp) UploadAofFileToIpfs()(string){
-
-	filePath, _ := config.Get("database.redis.aofPath")
-	fmt.Println("filepath: ",filePath)
-	ipfsHash, err := utils.UploadFile(filePath)
-	if(err != nil){
-		fmt.Println(err)
-		return ""
-	}
-	return ipfsHash
-}
 
 func (lsi LogicServiceImp) SendIpfsHashToEthereum(ipfsHash string) (txHash string){
 
@@ -97,37 +72,31 @@ func (lsi LogicServiceImp) SendIpfsHashToEthereum(ipfsHash string) (txHash strin
 
 
 
+func (lsi LogicServiceImp) WatchRedisChannalChange(){
 
 
+	go func(){
 
-func (lsi LogicServiceImp) Watch(){
+		for{
+			<- utils.UploadChannel
+			ipfsHash := utils.UploadAofFileToIpfs()
+			utils.Log.Info("修改后的Redis历史记录文件为: ", ipfsHash)
+		}
 
-	for{
-
-		aofReceipt := <-aofChannel
-
-		fmt.Println(aofReceipt.AofIpfsHash)
-
-
-	}
-
+	}()
 
 }
 
+
 func (lsi LogicServiceImp) AcquireFileFromIpfs(ipfsHash string) bool{
 
-	downloadPath, _ := config.Get("database.redis.downloadPath")
+	downloadPath := utils.Conf.DB.Rs.DownloadPath
 	err := utils.DownloadFile(ipfsHash,downloadPath)
 	if err!= nil{
 		fmt.Println(err)
 		return false
 	}
 	return true
-}
-
-func (lsi LogicServiceImp) RecoverRedisData(filePath string){
-
-
 }
 
 
