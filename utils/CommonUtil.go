@@ -3,7 +3,6 @@ package utils
 import (
 	"bytes"
 	"github.com/fsnotify/fsnotify"
-	"log"
 	"os/exec"
 	"strings"
 )
@@ -26,7 +25,7 @@ func UploadFile(filename string) (string, error) {
 		err := cmd.Run()
 
 		if err != nil {
-			log.Print(err)
+			Log.Error("上传文件到IPFS失败: ", err)
 			return "", err
 		}
 	}
@@ -73,7 +72,7 @@ func RedisCmdFileWatcher(){
 		}
 
 	}()
-
+	Log.Debug("file path: ",Conf.DB.Rs.HistroyPath)
 	err = watcher.Add(Conf.DB.Rs.HistroyPath)
 
 	if err != nil{

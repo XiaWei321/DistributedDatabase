@@ -1,11 +1,11 @@
 package core
 
+import "C"
 import (
 	"DistributedDatabase/utils"
 	"fmt"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/garyburd/redigo/redis"
-	"github.com/kylelemons/go-gypsy/yaml"
 )
 
 
@@ -27,13 +27,13 @@ type RecieveAofReciept struct{
 var aofChannel chan RecieveAofReciept
 var redisConnection redis.Conn
 var ethereumConnection *rpc.Client
-var config *yaml.File
+
 
 
 
 func (isi InitServiceImp) InitRedisConnection(){
 
-	databaseAddress, _ := config.Get("database.redis.address")
+	databaseAddress := utils.Conf.DB.Rs.Address
 	conn, err := redis.Dial("tcp", databaseAddress)
 	if err != nil {
 		fmt.Println(err)
@@ -44,7 +44,7 @@ func (isi InitServiceImp) InitRedisConnection(){
 
 func (isi InitServiceImp) InitEthereumConnection(){
 
-	ethereumAddress, _ := config.Get("ethereum.address")
+	ethereumAddress := utils.Conf.EC.Address
 	conn , err := rpc.Dial(ethereumAddress)
 	if err!= nil {
 		fmt.Println(err)

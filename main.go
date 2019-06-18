@@ -12,8 +12,8 @@ func main(){
 	lsi := core.LogicServiceImp{}
 	isi := core.InitServiceImp{}
 	isi.InitChannel()
-	isi.InitRedisConnection()
-	isi.InitEthereumConnection()
+	//isi.InitRedisConnection()
+	//isi.InitEthereumConnection()
 	lsi.WatchRedisChannalChange()
 
 
