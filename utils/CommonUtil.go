@@ -2,11 +2,13 @@ package utils
 
 import (
 	"bytes"
+	"github.com/fsnotify/fsnotify"
 	"log"
 	"os/exec"
 	"strings"
 )
 
+var UploadChannel chan bool
 
 func UploadFile(filename string) (string, error) {
 	// run ipfs add -r filename
@@ -44,3 +46,52 @@ func DownloadFile(hash string, filename string) (error){
 
 	return err
 }
+
+
+
+
+func RedisCmdFileWatcher(){
+
+	watcher, err := fsnotify.NewWatcher()
+	if err != nil {
+		Log.Error("创建文件watcher失败: ",err)
+	}
+
+	go func(){
+
+		for {
+
+			select{
+				case event := <- watcher.Events:
+					if event.Op & fsnotify.Write == fsnotify.Write {
+						UploadChannel <- true
+					}
+				case err := <- watcher.Errors:
+					Log.Error("获取文件状态失败: ",err)
+			}
+
+		}
+
+	}()
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

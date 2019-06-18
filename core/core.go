@@ -71,7 +71,7 @@ func (isi InitServiceImp) InitEthereumConnection(){
 func (isi InitServiceImp) InitChannel(){
 
 	aofChannel = make(chan RecieveAofReciept)
-
+	utils.UploadChannel = make(chan bool)
 }
 
 
