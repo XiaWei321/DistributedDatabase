@@ -11,16 +11,17 @@ var UploadChannel chan bool
 
 func UploadFile(filename string) (string, error) {
 	// run ipfs add -r filename
-	cmd := exec.Command(Conf.IPFS.execCommand + " ipfs", "add", "-r", filename)
+	cmds := strings.Split(Conf.IPFS.execCommand," ")
+	cmd := exec.Command(cmds[0], cmds[1], cmds[2] ,"ipfs", "add", "-r", filename)
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()
 	if err != nil {
 		// run: ipfs daemon
-		cmdIpfsDaemon := exec.Command(Conf.IPFS.execCommand + " ipfs", "daemon")
+		cmdIpfsDaemon := exec.Command(cmds[0], cmds[1], cmds[2], "ipfs", "daemon")
 		cmdIpfsDaemon.Run()
 		// try again
-		cmd := exec.Command(Conf.IPFS.execCommand + " ipfs", "add", "-r", filename)
+		cmd := exec.Command(cmds[0], cmds[1], cmds[2], "ipfs", "add", "-r", filename)
 		cmd.Stdout = &out
 		err := cmd.Run()
 
@@ -38,9 +39,10 @@ func UploadFile(filename string) (string, error) {
 
 
 func DownloadFile(hash string, filename string) (error){
+	cmds := strings.Split(Conf.IPFS.execCommand," ")
 	myhash := strings.Split(hash, "\000")
 	finalhash := myhash[0]
-	cmd := exec.Command(Conf.IPFS.execCommand + " ipfs", "get", finalhash, "-o="+filename)
+	cmd := exec.Command(cmds[0], cmds[1], cmds[2], "ipfs", "get", finalhash, "-o="+filename)
 	err := cmd.Run()
 
 	return err
