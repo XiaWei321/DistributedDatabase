@@ -12,3 +12,7 @@ ethereum-config:
   ethereum-admin-address: 0x4e0dc4ffa4609989c00183bc4a78b5ea70c33494
   ethereum-admin-password: abc
   ethereum-contract-address: 0xd929c03b3c2d4be4e6ad0e542938947aff658f46
+ipfs:
+  execute-command: docker exec ipfs
+  host-upload-path: /root/docker/ipfs/upload/.rediscli_history
+  docker-upload-path: /upload/.rediscli_history

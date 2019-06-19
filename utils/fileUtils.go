@@ -9,10 +9,18 @@ import (
 type Config struct {
 	DB Database `yaml:"database"`
 	EC EthereumConfig `yaml:"ethereum-config"`
+	IPFS Ipfs `yaml:"ipfs"`
 }
 
 type Database struct {
 	Rs Redis `yaml:"redis"`
+}
+
+type Ipfs struct {
+
+	ExecCommand string `yaml:"execute-command"`
+	DockerUploadPath string `yaml:"docker-upload-path"`
+	HostUploadPath string `yaml:"host-upload-path"`
 }
 
 type Redis struct {
