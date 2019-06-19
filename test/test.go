@@ -4,11 +4,13 @@ import (
 	"bytes"
 	"fmt"
 	"os/exec"
+	"strings"
 )
 
 func main(){
 
-	cmd := exec.Command("docker", "exec", "distributeddatabase-ethereum","netstat")
+	cmds := strings.Split("docker exec distributeddatabase-ethereum"," ")
+	cmd := exec.Command(cmds[0], cmds[1], cmds[2],"netstat")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()

@@ -80,6 +80,7 @@ func (lsi LogicServiceImp) WatchRedisChannalChange(){
 
 		for{
 			<- utils.UploadChannel
+			
 			ipfsHash := utils.UploadFileToIpfs()
 			utils.Log.Info("修改后的Redis历史记录文件为: ", ipfsHash)
 		}

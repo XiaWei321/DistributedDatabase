@@ -18,8 +18,9 @@ type Database struct {
 
 type Ipfs struct {
 
-	execCommand string `yaml:"execute-command"`
-
+	ExecCommand string `yaml:"execute-command"`
+	DockerUploadPath string `yaml:"upload-path"`
+	HostUploadPath string `yaml:"host-upload-path"`
 }
 
 type Redis struct {
