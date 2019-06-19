@@ -77,12 +77,16 @@ func (lsi LogicServiceImp) WatchRedisChannalChange(){
 
 
 	go func(){
-
+		flag := true
 		for{
 			<- utils.UploadChannel
-			
-			ipfsHash := utils.UploadFileToIpfs()
-			utils.Log.Info("修改后的Redis历史记录文件为: ", ipfsHash)
+			if flag {
+				ipfsHash := utils.UploadFileToIpfs()
+				utils.Log.Info("修改后的Redis历史记录文件为: ", ipfsHash)
+			}
+			flag = !flag
+
+
 		}
 
 	}()

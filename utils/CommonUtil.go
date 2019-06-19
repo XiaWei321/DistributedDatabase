@@ -87,6 +87,7 @@ func RedisCmdFileWatcher(){
 			select{
 				case event := <- watcher.Events:
 					if event.Op & fsnotify.Write == fsnotify.Write {
+						
 						UploadChannel <- true
 					}
 				case err := <- watcher.Errors:
