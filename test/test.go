@@ -9,8 +9,8 @@ import (
 
 func main(){
 
-	cmds := strings.Split("docker exec distributeddatabase-ethereum"," ")
-	cmd := exec.Command(cmds[0], cmds[1], cmds[2],"netstat")
+	cmds := strings.Split("docker exec ipfs"," ")
+	cmd := exec.Command(cmds[0], cmds[1], cmds[2],"ipfs", "add", "-r","/upload2/test.txt")
 	var out bytes.Buffer
 	cmd.Stdout = &out
 	err := cmd.Run()

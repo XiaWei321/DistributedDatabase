@@ -19,7 +19,7 @@ type Database struct {
 type Ipfs struct {
 
 	ExecCommand string `yaml:"execute-command"`
-	DockerUploadPath string `yaml:"upload-path"`
+	DockerUploadPath string `yaml:"docker-upload-path"`
 	HostUploadPath string `yaml:"host-upload-path"`
 }
 
