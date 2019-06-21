@@ -5,6 +5,7 @@ database:
     histroy-path: /root/docker/redis/root/.rediscli_history
     download-path: /root/docker/redis/root/.rediscli_history
     command-file-path: /root/docker/redis/root/.rediscli_history
+    exclude-words: exit,auth
 ethereum-config:
   address: http://47.100.205.196
   port: 8545
@@ -16,3 +17,4 @@ ipfs:
   execute-command: docker exec ipfs
   host-upload-path: /root/docker/ipfs/upload/.rediscli_history
   docker-upload-path: /upload/.rediscli_history
+

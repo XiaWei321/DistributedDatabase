@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"bufio"
 	"bytes"
 	"fmt"
 	"github.com/fsnotify/fsnotify"
@@ -10,7 +11,20 @@ import (
 	"strings"
 )
 
+var file1Instructions []Instruction
+var file2Instructions []Instruction
+var mergeInstructions []Instruction
+var MergeInstructChannel chan []Instruction
 var UploadChannel chan bool
+
+type Instruction struct {
+
+	Id string
+	DataInstruction string
+
+}
+
+
 
 func UploadFile(filename string) (string, error) {
 	// run ipfs add -r filename
@@ -87,7 +101,7 @@ func RedisCmdFileWatcher(){
 			select{
 				case event := <- watcher.Events:
 					if event.Op & fsnotify.Write == fsnotify.Write {
-						
+
 						UploadChannel <- true
 					}
 				case err := <- watcher.Errors:
@@ -118,6 +132,87 @@ func UploadFileToIpfs()(string){
 	}
 	return ipfsHash
 }
+
+
+// 调用该函数时需要加锁
+func FileMerge(file1 string, file2 string, dest string){
+
+
+	sourceFile, err := os.Open(file1)
+	if err != nil {
+		Log.Error("打开文件1失败: ",err)
+	}
+	defer sourceFile.Close()
+	sourceFile2, err := os.Open(file2)
+	if err != nil {
+		Log.Error("打开文件2失败: ",err)
+	}
+	defer sourceFile2.Close()
+	destFile, err := os.OpenFile(dest, os.O_WRONLY|os.O_CREATE, 0777)
+	if err != nil {
+		Log.Error("打开目标文件失败: ",err)
+	}
+	defer destFile.Close()
+
+	r1 := bufio.NewReader(sourceFile)
+	r2 := bufio.NewReader(sourceFile2)
+
+	readInstructionsToarray(*r1, file1Instructions)
+	readInstructionsToarray(*r2, file2Instructions)
+	mergeInstructionsAndWriteToFile(destFile)
+
+}
+
+func readInstructionsToarray(r bufio.Reader, array []Instruction){
+
+	for{
+
+		content,_,e := r.ReadLine()
+		if e == io.EOF {
+			break
+		}
+		newInstruct := ""
+		splits := strings.Split(string(content), ",")
+		for i:=1; i< len(splits); i++{
+			newInstruct = newInstruct+splits[i]+" "
+		}
+
+		array = append(array, Instruction{
+			Id: splits[0],
+			DataInstruction: newInstruct,
+		})
+
+	}
+
+
+}
+
+func mergeInstructionsAndWriteToFile(file *os.File){
+
+	st1, st2 := 0, 0
+
+	for st1 < len(file1Instructions) && st2 < len(file2Instructions) {
+		if file1Instructions[st1].Id < file2Instructions[st2].Id{
+			mergeInstructions = append(mergeInstructions, file1Instructions[st1])
+			st1++
+		}else{
+			mergeInstructions = append(mergeInstructions, file2Instructions[st2])
+			st2++
+		}
+	}
+
+	for st1 < len(file1Instructions) {
+		mergeInstructions = append(mergeInstructions, file1Instructions[st1])
+		st1++
+	}
+	for st2 < len(file2Instructions) {
+		mergeInstructions = append(mergeInstructions, file2Instructions[st2])
+		st2++
+	}
+	MergeInstructChannel <- mergeInstructions
+}
+
+
 
 
 

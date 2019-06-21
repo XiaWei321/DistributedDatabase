@@ -59,6 +59,7 @@ func (isi InitServiceImp) InitChannel(){
 	aofChannel = make(chan RecieveAofReciept)
 	utils.UploadChannel = make(chan bool)
 	messageChannel = make(chan string)
+	utils.MergeInstructChannel = make(chan []utils.Instruction)
 }
 
 
