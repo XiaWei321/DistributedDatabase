@@ -29,6 +29,7 @@ type Redis struct {
 	HistroyPath string `yaml:"histroy-path"`
 	DownloadPath string `yaml:"download-path"`
 	CommandFilePath string `yaml:"command-file-path"`
+	ExcludeWords string `yaml:"exclude-words"`
 }
 
 type EthereumConfig struct {

@@ -59,6 +59,7 @@ func (isi InitServiceImp) InitChannel(){
 	aofChannel = make(chan RecieveAofReciept)
 	utils.UploadChannel = make(chan bool)
 	messageChannel = make(chan string)
+	utils.MergeInstructChannel = make(chan []utils.Instruction)
 }
 
 
@@ -104,6 +105,20 @@ func (lsi LogicServiceImp) AcquireFileFromIpfs(ipfsHash string) bool{
 	}
 	return true
 }
+
+
+
+func WatchMergedInstructions(){
+
+
+	go func(){
+
+		instructions := <- utils.MergeInstructChannel
+		go utils.WriteInstructionsToFile(instructions)
+	}()
+
+}
+
 
 
 func (lsi LogicServiceImp) WatchEthereumMessage(){
