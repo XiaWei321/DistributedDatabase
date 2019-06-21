@@ -107,6 +107,20 @@ func (lsi LogicServiceImp) AcquireFileFromIpfs(ipfsHash string) bool{
 }
 
 
+
+func WatchMergedInstructions(){
+
+
+	go func(){
+
+		instructions := <- utils.MergeInstructChannel
+		go utils.WriteInstructionsToFile(instructions)
+	}()
+
+}
+
+
+
 func (lsi LogicServiceImp) WatchEthereumMessage(){
 
 

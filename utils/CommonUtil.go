@@ -9,13 +9,19 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"sync"
 )
 
+
+
+var mutex sync.Mutex
 var file1Instructions []Instruction
 var file2Instructions []Instruction
 var mergeInstructions []Instruction
 var MergeInstructChannel chan []Instruction
 var UploadChannel chan bool
+
+
 
 type Instruction struct {
 
@@ -148,18 +154,14 @@ func FileMerge(file1 string, file2 string, dest string){
 		Log.Error("打开文件2失败: ",err)
 	}
 	defer sourceFile2.Close()
-	destFile, err := os.OpenFile(dest, os.O_WRONLY|os.O_CREATE, 0777)
-	if err != nil {
-		Log.Error("打开目标文件失败: ",err)
-	}
-	defer destFile.Close()
+
 
 	r1 := bufio.NewReader(sourceFile)
 	r2 := bufio.NewReader(sourceFile2)
 
 	readInstructionsToarray(*r1, file1Instructions)
 	readInstructionsToarray(*r2, file2Instructions)
-	mergeInstructionsAndWriteToFile(destFile)
+	mergeInstructionsAndWriteToFile()
 
 }
 
@@ -187,7 +189,7 @@ func readInstructionsToarray(r bufio.Reader, array []Instruction){
 
 }
 
-func mergeInstructionsAndWriteToFile(file *os.File){
+func mergeInstructionsAndWriteToFile(){
 
 	st1, st2 := 0, 0
 
@@ -214,8 +216,21 @@ func mergeInstructionsAndWriteToFile(file *os.File){
 
 
 
+func WriteInstructionsToFile(instructions []Instruction){
 
-
+	mutex.Lock()
+	file, err := os.OpenFile("../test/testFile", os.O_WRONLY|os.O_CREATE, 0777)
+	if err != nil {
+		Log.Error("指令写入文件失败: ", err)
+	}
+	defer file.Close()
+	writer := bufio.NewWriter(file)
+	for i:=0; i<len(instructions); i++ {
+		fmt.Fprintln(writer, instructions[i])
+	}
+	writer.Flush()
+	mutex.Unlock()
+}
 
 
 
