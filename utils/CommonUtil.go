@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"bytes"
+	"encoding/hex"
 	"fmt"
 	"github.com/fsnotify/fsnotify"
 	"io"
@@ -234,6 +235,22 @@ func WriteInstructionsToFile(instructions []Instruction){
 
 
 
+func DecryptTransactionInput(input string) string {
+
+	input = input[2:]
+
+	decodeStr, _ := hex.DecodeString(input)
+
+	return string(decodeStr)
+
+}
+
+func EncryptTransactionInput(input string) string {
+
+	encodeStr := hex.EncodeToString([]byte(input))
+
+	return encodeStr
+}
 
 
 

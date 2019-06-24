@@ -3,9 +3,13 @@ package core
 import "C"
 import (
 	"DistributedDatabase/utils"
+	"context"
 	"fmt"
-	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/garyburd/redigo/redis"
+	"sync"
+	"time"
 )
 
 
@@ -23,10 +27,12 @@ type RecieveAofReciept struct{
 	AofIpfsHash string
 }
 
+var redisConnection redis.Conn
+var ethereumConnection *ethclient.Client
+var mutex sync.Mutex
 
 var aofChannel chan RecieveAofReciept
-var redisConnection redis.Conn
-var ethereumConnection *rpc.Client
+var transactionChannel chan string
 var messageChannel chan string
 
 
@@ -44,13 +50,19 @@ func (isi InitServiceImp) InitRedisConnection(){
 
 func (isi InitServiceImp) InitEthereumConnection(){
 
-	ethereumAddress := utils.Conf.EC.Address
-	conn , err := rpc.Dial(ethereumAddress)
-	if err!= nil {
-		fmt.Println(err)
-		return
+	if ethereumConnection == nil {
+		mutex.Lock()
+		if ethereumConnection == nil {
+			conn, err := ethclient.Dial(utils.Conf.EC.EthereumUrl)
+			if err != nil{
+				utils.Log.Error("获取以太坊连接失败: ",err)
+			}else{
+				ethereumConnection = conn
+
+			}
+		}
+		mutex.Unlock()
 	}
-	ethereumConnection = conn
 }
 
 
@@ -60,6 +72,7 @@ func (isi InitServiceImp) InitChannel(){
 	utils.UploadChannel = make(chan bool)
 	messageChannel = make(chan string)
 	utils.MergeInstructChannel = make(chan []utils.Instruction)
+	transactionChannel = make(chan string)
 }
 
 
@@ -84,6 +97,14 @@ func (lsi LogicServiceImp) WatchRedisChannalChange(){
 			if flag {
 				ipfsHash := utils.UploadFileToIpfs()
 				utils.Log.Info("修改后的Redis历史记录文件为: ", ipfsHash)
+				encodeHash := utils.EncryptTransactionInput(ipfsHash)
+				to := common.HexToAddress("")
+				from := common.HexToAddress(utils.Conf.EC.EthereumAdminAddress)
+				message := utils.NewMessage(from, &to, "0x10","0x"+encodeHash, "0x295f05","0x77359400")
+				txHash := utils.SendTransaction(ethereumConnection,&message, utils.Conf.EC.EthereumAdminPassword,context.TODO())
+				utils.Log.Info("提交的交易Hash为: ", txHash)
+				transactionChannel <- txHash
+				utils.WaitUtilNoPendingTransactions(ethereumConnection)
 			}
 			flag = !flag
 
@@ -107,6 +128,27 @@ func (lsi LogicServiceImp) AcquireFileFromIpfs(ipfsHash string) bool{
 }
 
 
+func (lsi LogicServiceImp) WatchEthereumMessage(){
+
+
+	for {
+
+		txHash := <- transactionChannel
+		go func(){
+			for{
+				reciept := utils.GetTrasnactionReciept(ethereumConnection, txHash)
+				if reciept != nil {
+					break
+				}
+				time.Sleep(time.Duration(100)*time.Millisecond)
+			}
+			//TODO: 解析交易里面的值
+
+		}()
+
+	}
+
+}
 
 func WatchMergedInstructions(){
 
@@ -118,17 +160,3 @@ func WatchMergedInstructions(){
 	}()
 
 }
-
-
-
-func (lsi LogicServiceImp) WatchEthereumMessage(){
-
-
-	for {
-
-		<- messageChannel
-
-	}
-
-}
-

@@ -13,7 +13,7 @@ func main(){
 	isi := core.InitServiceImp{}
 	isi.InitChannel()
 	//isi.InitRedisConnection()
-	//isi.InitEthereumConnection()
+	isi.InitEthereumConnection()
 	lsi.WatchRedisChannalChange()
 	lsi.WatchEthereumMessage()
 
