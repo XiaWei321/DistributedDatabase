@@ -33,8 +33,7 @@ type Redis struct {
 }
 
 type EthereumConfig struct {
-	Address string `yaml:"address"`
-	Port string `yaml:"port"`
+	EthereumUrl string `yaml:"ethereum-url"`
 	EthereumAdminAccount string `yaml:"ethereum-admin-account"`
 	EthereumAdminAddress string `yaml:"ethereum-admin-address"`
 	EthereumAdminPassword string `yaml:"ethereum-admin-password"`

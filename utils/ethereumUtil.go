@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 	"log"
@@ -75,12 +76,15 @@ func UnlockAccount(client *rpc.Client, account string, password string) (error) 
 	return err
 }
 
-func SendTransaction(client *rpc.Client, tx *Message, password string, ctx context.Context) (string, error) {
+func SendTransaction(client *rpc.Client, tx *Message, password string, ctx context.Context) (string) {
 
 	var txHash string
 	err := client.CallContext(ctx, &txHash, "personal_signAndSendTransaction", tx, password)
 	//err:=client.rpcClient.Call(&result,"eth_sendTransaction",tx)
-	return txHash, err
+	if err != nil {
+		Log.Error("提交交易失败: ",err)
+	}
+	return txHash
 }
 
 func SendRawTransaction(client *rpc.Client, data string) (string, error) {
@@ -147,4 +151,27 @@ func GetBalance(client *rpc.Client, account string) string{
 		log.Fatal(err)
 	}
 	return result
+}
+
+
+func WaitUtilNoPendingTransactions(client *ethclient.Client){
+
+	number, _ := client.PendingTransactionCount(context.TODO())
+
+	for number != 0 {
+		number, _ = client.PendingTransactionCount(context.TODO())
+	}
+
+}
+
+func GetTrasnactionReciept(client *ethclient.Client, txHash string)(*types.Receipt){
+
+
+	reciept, err := client.TransactionReceipt(context.TODO(), common.HexToHash(txHash))
+
+	if err != nil {
+		Log.Error("获取交易凭证失败: ",err)
+	}
+
+	return reciept
 }
